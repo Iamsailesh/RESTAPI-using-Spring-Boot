@@ -1,8 +1,12 @@
 package com.jp.practicerest.controller;
 
+import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,25 +23,41 @@ public class bookController {
 	@Autowired
 	private BookService bookService ;
 	//getting handler
+	
+	
 	@GetMapping("/books")
-	public List<Books> getBooks(){
-		return this.bookService.getAllBooks();
-		
+	public ResponseEntity<List<Books>> getBooks(){
+		List<Books> list=bookService.getAllBooks();
+		if(list.size()<=0) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+		return ResponseEntity.of(Optional.of(list));
 	}
 	
 	//getting specific book
 	
 	@GetMapping("books/{id}")
-	public Books getBookById(@PathVariable("id") int id) {
-		return bookService.getBookById(id);
-		
+	public ResponseEntity<Books> getBookById(@PathVariable("id") int id) {
+		Books book= bookService.getBookById(id);
+		if(book==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();		
+			} 
+		return ResponseEntity.of(Optional.of(book));
 	}
 	
 	//post handler
 	@PostMapping("/books")
-	public Books postBook(@RequestBody Books b) {
-		Books c= this.bookService.postBook(b);
-		return c;
+	public ResponseEntity<Books> postBook(@RequestBody Books b) {
+		Books c= null;
+		try {
+			b=bookService.postBook(b);
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+		
 	}
 	//delete handler
 	@DeleteMapping("/books/{id}")
