@@ -1,6 +1,5 @@
 package com.jp.practicerest.controller;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +49,7 @@ public class bookController {
 	public ResponseEntity<Books> postBook(@RequestBody Books b) {
 		Books c= null;
 		try {
-			b=bookService.postBook(b);
+			c=bookService.postBook(b);
 			return ResponseEntity.status(HttpStatus.CREATED).build();
 			
 		} catch (Exception e) {

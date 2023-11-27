@@ -1,68 +1,74 @@
 package com.jp.practicerest.services;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.jp.practicerest.dao.BookRepository;
 import com.jp.practicerest.entities.Books;
 @Component
 public class BookService {
 	
-	private static List<Books> list= new ArrayList<>();
+	@Autowired
+	private BookRepository bookRepo;
 	
-	static {
+	public List<Books> getAllBooks(){
 		
-		list.add(new Books(11,"Karnali Blues", "Buddhi Sagar"));
-		list.add(new Books(12,"Butterfly Dreams", "Anne Mccard"));
-		list.add(new Books(13,"Fellowship Point", "Alice Elliott"));
-		list.add(new Books(14,"Anna", "Amy Odell"));
-		list.add(new Books(115,"Cult Classic", "Sloane Crosley"));
-		list.add(new Books(117,"Lapvona", "Ottessa"));
-	}
+		
+		List<Books> list=this.bookRepo.findAll();
+		return list;
+		
+		
+		}
+	
+	
+//	private static List<Books> list= new ArrayList<>();
+	
+	
+//	static {
+//		
+//		list.add(new Books(11,"Karnali Blues", "Buddhi Sagar"));
+//		list.add(new Books(12,"Butterfly Dreams", "Anne Mccard"));
+//		list.add(new Books(13,"Fellowship Point", "Alice Elliott"));
+//		list.add(new Books(14,"Anna", "Amy Odell"));
+//		list.add(new Books(115,"Cult Classic", "Sloane Crosley"));
+//		list.add(new Books(117,"Lapvona", "Ottessa"));
+//	}
+	
 	
 	// if get all books 
-		public List<Books> getAllBooks(){
-			return list;
-			}
+		
 		
 		//if single book is asked
 		public Books getBookById(int id) {
-			for (Books book : list) {
-				if (book.getBid() == id) {
-					return book;
-				}
-			}
-			return null; // Return null if the book with the specified ID is not found
+			 Optional<Books> optionalBook = bookRepo.findById(id);
+
+			    // Return the book if present, or null if not present
+			    return optionalBook.orElse(null);
+			
+			
 		}
 		
 		//adding book to an array
 		public Books postBook(Books b) {
-			list.add(b);
-			return b;
+			Books rslt= bookRepo.save(b);
+			return rslt;
 			
 		}
 		
 		//deleting book of the array
 		
 		public void deleteBook(int id) {
-		    list.removeIf(book -> book.getBid() == id);
+		 bookRepo.deleteById(id);
 		}
 		
 		//editing the book
 		
 		public void editBook(Books book, int id) {
+			book.setBid(id);
 			
-			list= list.stream().map(e->{
-				if(e.getBid()==id){
-					e.setBname(book.getBname());
-					e.setAuthor(book.getAuthor());
-				}
-				return e;
-					
-			}).collect(Collectors.toList());
-			
+			bookRepo.save(book);
 			
 		}
 	

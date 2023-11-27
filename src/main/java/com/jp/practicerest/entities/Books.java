@@ -1,7 +1,14 @@
 package com.jp.practicerest.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Books {
-	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int bid;
 	private String bname;
 	private String author;
