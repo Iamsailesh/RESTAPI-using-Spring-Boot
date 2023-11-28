@@ -1,9 +1,13 @@
 package com.jp.practicerest.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Books {
@@ -11,9 +15,12 @@ public class Books {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int bid;
 	private String bname;
-	private String author;
 	
-	public Books(int bid, String bname, String author) {
+	@OneToOne(cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private Author author;
+	
+	public Books(int bid, String bname, Author author) {
 		super();
 		this.bid = bid;
 		this.bname = bname;
@@ -36,11 +43,11 @@ public class Books {
 		this.bname = bname;
 	}
 
-	public String getAuthor() {
+	public Author getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(String author) {
+	public void setAuthor(Author author) {
 		this.author = author;
 	}
 

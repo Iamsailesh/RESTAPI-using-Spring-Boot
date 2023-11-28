@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,17 +48,19 @@ public class bookController {
 	//post handler
 	@PostMapping("/books")
 	public ResponseEntity<Books> postBook(@RequestBody Books b) {
-		Books c= null;
-		try {
-			c=bookService.postBook(b);
-			return ResponseEntity.status(HttpStatus.CREATED).build();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-		
+	    Books c = null;
+	    try {
+	        c = bookService.postBook(b);
+	        return ResponseEntity.status(HttpStatus.CREATED).body(c);
+	    } catch (DataIntegrityViolationException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();  // or another appropriate HTTP status
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
+
 	//delete handler
 	@DeleteMapping("/books/{id}")
 	public void delete(@PathVariable("id") int id) {
